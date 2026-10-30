@@ -61,7 +61,8 @@ jobs:
       - name: Upload Windows build
         uses: actions/upload-artifact@v7
         with:
-          name: vault-windows-x64-${{ github.sha }}
+          # PR builds are named by the PR head commit (github.sha is the temporary merge commit).
+          name: vault-windows-x64-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             target/release/vault.exe
             target/release/bundle/msi/*.msi
