@@ -47,8 +47,28 @@ jobs:
 
       - name: cargo test
         run: cargo test --workspace
-      - name: Build app (no installer)
-        run: pnpm tauri build --no-bundle
+      # Release build with installers, so every PR has a downloadable Windows build.
+      # Builds are unsigned until code signing is set up (docs/WINDOWS.md).
+      - name: Build app and installers
+        run: pnpm tauri build
+      - name: Report build sizes
+        shell: pwsh
+        run: |
+          # Installer budget: < 15 MB (docs/PERFORMANCE.md). Reported, not yet enforced.
+          "| File | Size (MB) |`n| --- | --- |" >> $env:GITHUB_STEP_SUMMARY
+          Get-Item target/release/vault.exe, target/release/bundle/msi/*.msi, target/release/bundle/nsis/*.exe |
+            ForEach-Object { "| $($_.Name) | $([math]::Round($_.Length / 1MB, 2)) |" >> $env:GITHUB_STEP_SUMMARY }
+      - name: Upload Windows build
+        uses: actions/upload-artifact@v7
+        with:
+          # PR builds are named by the PR head commit (github.sha is the temporary merge commit).
+          name: vault-windows-x64-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            target/release/vault.exe
+            target/release/bundle/msi/*.msi
+            target/release/bundle/nsis/*.exe
+          if-no-files-found: error
+          retention-days: 14
 
   # Keep the code portable from day one; full tests on these OSes start in Phase 2.
   check:
