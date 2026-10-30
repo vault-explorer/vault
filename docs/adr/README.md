@@ -30,3 +30,9 @@ Changes to the **config format or plugin API** go through an [RFC](../rfcs/READM
 | [0004](0004-lua-plugins.md) | Use Lua 5.4 via mlua for 1.0 plugins | Accepted |
 | [0005](0005-dual-mit-apache-license.md) | Dual-license under MIT and Apache-2.0 | Accepted (confirm before first release) |
 | [0006](0006-cli-name-vlt.md) | Name the companion CLI `vlt` | Accepted |
+| [0007](0007-rust-toolchain-and-lint-policy.md) | Use Rust edition 2024, MSRV 1.90 and strict lints | Accepted |
+| [0008](0008-workspace-layout-and-naming.md) | Name crates `vault-*` and keep the app crate out of default members | Accepted |
+| [0009](0009-platform-trait-dispatch.md) | Select the platform implementation at compile time | Accepted |
+| [0010](0010-ipc-boundary.md) | Keep serialization at the IPC boundary and lock down the webview | Accepted |
+| [0011](0011-ui-toolchain.md) | Use TypeScript 6.0, Vite and strict type-checked ESLint for the UI | Accepted |
+| [0012](0012-project-process-defaults.md) | Adopt Contributor Covenant 2.1 and GitHub private vulnerability reporting | Accepted |

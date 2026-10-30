@@ -33,6 +33,8 @@ Each decision has an ADR with context and consequences.
 | Config | TOML + JSON Schema | — |
 | Telemetry | None by default; opt-in crash reports only | — |
 
+Decisions made while scaffolding the repo (toolchain, naming, platform dispatch, IPC boundary, UI tooling, project process) are ADRs [0007–0012](adr/README.md#index).
+
 ## Project process
 
 - **CI (GitHub Actions):** build + test on Windows per PR (macOS/Linux compile checks from day one, full tests from Phase 2); clippy, rustfmt, eslint, prettier; benchmark comparison vs `main`; nightly builds; tagged releases publish installers + updater feed.
