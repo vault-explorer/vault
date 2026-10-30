@@ -1,0 +1,38 @@
+# Weekly dependency updates. Minor and patch bumps are grouped into one PR per
+# ecosystem; major bumps arrive as individual PRs so each gets its own review.
+version: 2
+updates:
+  - package-ecosystem: cargo
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: chore
+    groups:
+      cargo-minor-patch:
+        update-types: [minor, patch]
+
+  # pnpm workspace (root package.json + app/ui) via the npm ecosystem.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: chore
+    groups:
+      npm-minor-patch:
+        update-types: [minor, patch]
+    ignore:
+      # Pinned to ~6.0 until typescript-eslint supports TypeScript 7 (ADR 0011).
+      - dependency-name: typescript
+        update-types: [version-update:semver-major]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+    groups:
+      actions-minor-patch:
+        update-types: [minor, patch]
