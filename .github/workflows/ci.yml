@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -D warnings
+
+jobs:
+  # Full build, test and lint on the MVP platform.
+  windows:
+    name: Windows · build, test, lint
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: rustfmt
+        run: cargo fmt --all -- --check
+      - name: clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: eslint
+        run: pnpm lint
+      - name: prettier
+        run: pnpm format:check
+      - name: typecheck
+        run: pnpm typecheck
+
+      - name: cargo test
+        run: cargo test --workspace
+      - name: Build app (no installer)
+        run: pnpm tauri build --no-bundle
+
+  # Keep the code portable from day one; full tests on these OSes start in Phase 2.
+  check:
+    name: ${{ matrix.os }} · cargo check
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install Tauri system libraries
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev librsvg2-dev libsoup-3.0-dev
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo check --workspace --all-targets
+
+  # The declared rust-version must actually build.
+  msrv:
+    name: MSRV (1.90) · cargo check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@1.90
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo check --all-targets
+
+  # Placeholder: runs the benches once in test mode so they keep compiling.
+  # The Phase 0 harness replaces this with a comparison against main that fails
+  # on a >10% regression (docs/PERFORMANCE.md, docs/backlog/phase-0.md).
+  bench:
+    name: Benchmarks (placeholder)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo bench -p vault-bench -- --test
