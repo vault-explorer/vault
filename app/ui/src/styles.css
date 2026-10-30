@@ -1,0 +1,45 @@
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff;
+  --fg: #1f2328;
+  --muted: #656d76;
+  --error: #cf222e;
+  font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  font-size: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1e1e1e;
+    --fg: #e6edf3;
+    --muted: #8d96a0;
+    --error: #ff7b72;
+  }
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+#root,
+.app {
+  height: 100%;
+}
+
+.status {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  margin: 0;
+  padding: 4px 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.status--error {
+  color: var(--error);
+}

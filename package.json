@@ -1,0 +1,21 @@
+{
+  "name": "vault-workspace",
+  "private": true,
+  "license": "MIT OR Apache-2.0",
+  "packageManager": "pnpm@11.1.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "tauri": "tauri",
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "lint": "pnpm --filter vault-ui lint",
+    "format": "pnpm --filter vault-ui format",
+    "format:check": "pnpm --filter vault-ui format:check",
+    "typecheck": "pnpm --filter vault-ui typecheck"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.12.4"
+  }
+}
