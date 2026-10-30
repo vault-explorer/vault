@@ -1,6 +1,6 @@
 # 0008. Name crates `vault-*` and keep the app crate out of default members
 
-- **Status:** Accepted
+- **Status:** Accepted — bundle identifier superseded by [0013](0013-bundle-identifier.md)
 - **Date:** 2026-10-29
 - **Deciders:** project maintainer (made during repo scaffolding)
 

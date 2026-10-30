@@ -33,7 +33,7 @@ Each decision has an ADR with context and consequences.
 | Config | TOML + JSON Schema | — |
 | Telemetry | None by default; opt-in crash reports only | — |
 
-Decisions made while scaffolding the repo (toolchain, naming, platform dispatch, IPC boundary, UI tooling, project process) are ADRs [0007–0012](adr/README.md#index).
+Decisions made while scaffolding the repo (toolchain, naming, platform dispatch, IPC boundary, UI tooling, project process) are ADRs [0007–0012](adr/README.md#index); the bundle identifier is [0013](adr/0013-bundle-identifier.md).
 
 ## Project process
 
