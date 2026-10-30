@@ -1,0 +1,57 @@
+name: Bug report
+description: Something doesn't work as expected.
+labels: [bug, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! **If this bug lost or damaged files, say so in the title** — data-loss bugs are top priority.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open a folder with ...
+        2. Press ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Vault version
+      placeholder: "e.g. 0.1.0 or commit hash"
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Windows 11
+        - Windows 10 22H2
+        - macOS
+        - Linux
+    validations:
+      required: true
+  - type: dropdown
+    id: data-loss
+    attributes:
+      label: Did this lose or damage any files?
+      options:
+        - "No"
+        - "Yes"
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      render: text

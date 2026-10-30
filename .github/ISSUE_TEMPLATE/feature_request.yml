@@ -1,0 +1,31 @@
+name: Feature request
+description: Suggest an improvement or a new feature.
+labels: [enhancement, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Check [docs/FEATURES.md](../blob/main/docs/FEATURES.md) and [docs/ROADMAP.md](../blob/main/docs/ROADMAP.md) first — it may already be planned. Changes to the config format or plugin API need an [RFC](../blob/main/docs/rfcs/README.md).
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like to happen?
+      description: Include the keyboard shortcut or command-palette entry you'd expect, if any.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives or workarounds
+  - type: checkboxes
+    id: plugin
+    attributes:
+      label: Scope
+      options:
+        - label: This could be a plugin rather than a core feature.
