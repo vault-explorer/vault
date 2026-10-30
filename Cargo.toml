@@ -1,0 +1,62 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/core",
+    "crates/index",
+    "crates/platform",
+    "crates/git",
+    "crates/plugins",
+    "crates/cli",
+    "app/src-tauri",
+    "bench",
+]
+# `cargo build` / `cargo test` without `--workspace` skip the Tauri app, so
+# the Rust crates build anywhere without the webview system libraries.
+default-members = [
+    "crates/core",
+    "crates/index",
+    "crates/platform",
+    "crates/git",
+    "crates/plugins",
+    "crates/cli",
+    "bench",
+]
+
+[workspace.package]
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.90"
+license = "MIT OR Apache-2.0"
+authors = ["Vault contributors"]
+publish = false
+
+[workspace.dependencies]
+vault-core = { path = "crates/core" }
+vault-platform = { path = "crates/platform" }
+
+[workspace.lints.rust]
+unsafe_op_in_unsafe_fn = "deny"
+missing_docs = "warn"
+rust_2018_idioms = { level = "warn", priority = -1 }
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+dbg_macro = "warn"
+todo = "warn"
+unwrap_used = "warn"
+# Pedantic lints that are noise for this codebase.
+module_name_repetitions = "allow"
+missing_errors_doc = "allow"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 3
+panic = "abort"
+strip = true
+
+[profile.bench]
+inherits = "release"
+debug = true
+strip = false

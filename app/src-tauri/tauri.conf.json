@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Vault",
+  "mainBinaryName": "vault",
+  "identifier": "dev.vaultexplorer.vault",
+  "build": {
+    "devUrl": "http://localhost:5173",
+    "frontendDist": "../ui/dist",
+    "beforeDevCommand": "pnpm --filter vault-ui dev",
+    "beforeBuildCommand": "pnpm --filter vault-ui build"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Vault",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 640,
+        "minHeight": 400
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' asset: http://asset.localhost data:; style-src 'self'; connect-src ipc: http://ipc.localhost",
+      "devCsp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["msi", "nsis"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}

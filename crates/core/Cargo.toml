@@ -1,0 +1,15 @@
+[package]
+name = "vault-core"
+description = "Vault core: file model, operations queue, journal and undo log."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+publish.workspace = true
+
+[dependencies]
+vault-platform.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,31 @@
+[package]
+name = "vault-app"
+description = "Vault desktop app: Tauri 2 shell, IPC commands and window management."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+publish.workspace = true
+
+[lib]
+name = "vault_app"
+path = "src/lib.rs"
+
+[[bin]]
+name = "vault"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build = "2"
+
+[dependencies]
+serde = { version = "1.0.229", features = ["derive"] }
+tauri = "2"
+vault-core.workspace = true
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+serde_json = "1.0.154"

@@ -1,0 +1,15 @@
+[package]
+name = "vault-index"
+description = "Vault index: whole-disk indexer, search and query-language parser."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+publish.workspace = true
+
+[dependencies]
+vault-platform.workspace = true
+
+[lints]
+workspace = true
