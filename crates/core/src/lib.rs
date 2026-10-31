@@ -22,6 +22,8 @@
 
 use vault_platform::Platform as _;
 
+pub mod dir;
+
 /// Version of the core crate.
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 

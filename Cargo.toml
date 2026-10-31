@@ -33,6 +33,7 @@ publish = false
 
 [workspace.dependencies]
 vault-core = { path = "crates/core" }
+vault-index = { path = "crates/index" }
 vault-platform = { path = "crates/platform" }
 
 [workspace.lints.rust]
