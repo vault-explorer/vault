@@ -64,23 +64,26 @@ Feeds the `Indexer` trait in `crates/platform` ([WINDOWS.md](../WINDOWS.md)). Bu
 - [ ] USN tailing reports changes made during the run.
 - [ ] Peak memory recorded and consistent with the *idle memory < 150 MB* budget for the steady-state index (or a plan to get there).
 
-## 4. Benchmark harness
+## 4. Benchmark harness — first version done
 
-Makes [PERFORMANCE.md](../PERFORMANCE.md) enforceable: *> 10% regression fails the build.*
+Makes [PERFORMANCE.md](../PERFORMANCE.md) measurable. How to use it: [bench/README.md](../../bench/README.md). CI enforcement is deferred by [ADR 0014](../adr/0014-report-only-bench-ci.md), so the unticked items below stay open.
 
-- [ ] Criterion benches in `bench/` for Rust-side budgets, with shared fixtures (synthetic trees, name corpora) in `vault-bench`.
-- [ ] UI-side harness: drive the built app (Playwright over WebView2's DevTools protocol) to measure cold start, scroll fps/DOM rows, keystroke → results latency, preview latency.
-- [ ] Process metrics: idle memory (app + WebView2 processes) and idle CPU after 60 s.
-- [ ] Installer size check on the MSI/NSIS output.
-- [ ] Store `main`'s results (e.g. a `bench-results` branch or workflow artifact) and compare each PR against them in the `bench` CI job, posting a summary.
-- [ ] Measure runner noise: run the same commit 5 times; if variance > 5%, move the bench job to a dedicated (self-hosted) Windows runner.
+- [x] Criterion benches in `bench/` for Rust-side budgets, with shared fixtures (synthetic trees, name corpora) in `vault-bench`.
+- [x] UI-side harness: drive the built app over WebView2's DevTools protocol to measure cold start and scroll frame times and DOM rows ([ADR 0015](../adr/0015-app-benches-over-raw-cdp.md)). Scroll runs against a bench probe list until item 1 lands.
+- [ ] UI-side harness: keystroke → results latency and preview latency. Not measurable until those features exist.
+- [x] Process metrics: idle memory (app + WebView2 processes).
+- [ ] Process metrics: idle CPU after 60 s.
+- [ ] Installer size check on the MSI/NSIS output. CI reports sizes but doesn't compare them with the budget.
+- [x] Compare each PR against its base in the `bench` CI job, posting a summary. Replaces storing `main`'s results: both commits are built and benched in one job ([ADR 0014](../adr/0014-report-only-bench-ci.md)).
+- [ ] Measure runner noise over more runs: run the same commit 5 times; if variance > 5%, move the bench job to a dedicated (self-hosted) Windows runner. First data point in ADR 0014.
+- [ ] Windows 11 numbers. So far only Windows 10 22H2 locally, plus whatever image `windows-latest` uses.
 
 **Acceptance criteria**
 
-- [ ] Every row in the budget table maps to a named benchmark, or is explicitly marked "not measurable yet" with the phase it becomes measurable.
-- [ ] The CI `bench` job fails a PR that regresses any measured budget by **> 10%** against `main` (demonstrated with a deliberately slow commit).
-- [ ] Cold start to usable window (< 400 ms), idle memory (< 150 MB) and installer size (< 15 MB) are measured on every PR.
-- [ ] Run-to-run noise on the CI runner is documented and below the regression threshold.
+- [x] Every row in the budget table maps to a named benchmark, or is explicitly marked "not measurable yet" with the phase it becomes measurable. See [PERFORMANCE.md](../PERFORMANCE.md#what-is-measured-today).
+- [ ] The CI `bench` job fails a PR that regresses any measured budget by **> 10%** against `main`. Deferred: report-only for now, with the conditions for blocking in ADR 0014.
+- [ ] Cold start to usable window (< 400 ms), idle memory (< 150 MB) and installer size (< 15 MB) are measured on every PR. Cold start and idle memory are; installer size is reported only.
+- [ ] Run-to-run noise on the CI runner is documented and below the regression threshold. See ADR 0014.
 
 ---
 
@@ -89,3 +92,4 @@ Makes [PERFORMANCE.md](../PERFORMANCE.md) enforceable: *> 10% regression fails t
 - [x] Monorepo scaffold: Cargo + pnpm workspaces, crates, Tauri 2 app, example IPC command
 - [x] CI: Windows build/test/lint, macOS/Linux `cargo check`, MSRV check, placeholder bench job
 - [x] Docs, ADRs 0001–0006, RFC process, community files
+- [x] Benchmark harness, first version (item 4; open sub-items remain listed there)

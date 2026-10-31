@@ -37,3 +37,5 @@ Changes to the **config format or plugin API** go through an [RFC](../rfcs/READM
 | [0011](0011-ui-toolchain.md) | Use TypeScript 6.0, Vite and strict type-checked ESLint for the UI | Accepted |
 | [0012](0012-project-process-defaults.md) | Adopt Contributor Covenant 2.1 and GitHub private vulnerability reporting | Accepted |
 | [0013](0013-bundle-identifier.md) | Use `io.github.vault-explorer.vault` as the bundle identifier | Accepted |
+| [0014](0014-report-only-bench-ci.md) | Report benchmark comparisons in CI without failing the build | Proposed |
+| [0015](0015-app-benches-over-raw-cdp.md) | Measure app-level budgets over raw CDP, in bench builds only | Proposed |
