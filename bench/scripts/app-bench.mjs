@@ -215,6 +215,18 @@ async function scrollOnce(session) {
   })()`);
 }
 
+/** How the WebView2 browser process was started, to explain a missing debug port. */
+function describeBrowserProcess() {
+  try {
+    return powershell(`
+      Get-CimInstance Win32_Process -Filter "Name='msedgewebview2.exe'" |
+        Where-Object { $_.CommandLine -notmatch '--type=' } |
+        ForEach-Object { $_.CommandLine }`).trim();
+  } catch (error) {
+    return `unavailable: ${error.message}`;
+  }
+}
+
 async function measureScroll(exe, runs) {
   return withProfile(async (profileDir) => {
     const port = await freePort();
@@ -224,7 +236,11 @@ async function measureScroll(exe, runs) {
     let session;
     try {
       await ready;
-      session = await connectToPage(port, CDP_TIMEOUT_MS);
+      try {
+        session = await connectToPage(port, CDP_TIMEOUT_MS);
+      } catch (error) {
+        throw new Error(`${error.message}\nWebView2 browser process: ${describeBrowserProcess()}`);
+      }
       await openScrollProbe(session);
 
       const passes = [];
@@ -267,10 +283,21 @@ async function measureScroll(exe, runs) {
   });
 }
 
+/** Runs each bench independently, so one failing doesn't lose the others' numbers. */
 export async function runAppBench({ exe, probeExe, runs, settleSeconds }) {
-  return [
-    ...(await measureColdStart(exe, runs)),
-    ...(await measureIdleMemory(exe, runs, settleSeconds)),
-    ...(await measureScroll(probeExe, runs)),
+  const benches = [
+    ["cold start", () => measureColdStart(exe, runs)],
+    ["idle memory", () => measureIdleMemory(exe, runs, settleSeconds)],
+    ["scroll", () => measureScroll(probeExe, runs)],
   ];
+  const metrics = [];
+  const failures = [];
+  for (const [name, measure] of benches) {
+    try {
+      metrics.push(...(await measure()));
+    } catch (error) {
+      failures.push(`${name}: ${error.message}`);
+    }
+  }
+  return { metrics, failures };
 }

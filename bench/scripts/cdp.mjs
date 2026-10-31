@@ -7,22 +7,32 @@ export async function pollUntil(description, timeoutMs, attempt) {
   for (;;) {
     const value = await attempt();
     if (value) return value;
-    if (performance.now() > deadline) throw new Error(`timed out waiting for ${description}`);
+    if (performance.now() > deadline) {
+      const what = typeof description === "function" ? description() : description;
+      throw new Error(`timed out waiting for ${what}`);
+    }
     await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
   }
 }
 
 /** Waits for a page target on `port` and connects to it. */
 export async function connectToPage(port, timeoutMs) {
-  const target = await pollUntil(`a page target on port ${String(port)}`, timeoutMs, async () => {
-    try {
-      const response = await fetch(`http://127.0.0.1:${String(port)}/json/list`);
-      const targets = await response.json();
-      return targets.find((candidate) => candidate.type === "page");
-    } catch {
-      return undefined; // Not listening yet.
-    }
-  });
+  let lastSeen = "nothing";
+  const target = await pollUntil(
+    () => `a page target on port ${String(port)}; last saw ${lastSeen}`,
+    timeoutMs,
+    async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:${String(port)}/json/list`);
+        const targets = await response.json();
+        lastSeen = `targets ${JSON.stringify(targets.map(({ type, url }) => ({ type, url })))}`;
+        return targets.find((candidate) => candidate.type === "page");
+      } catch (error) {
+        lastSeen = `${error.message} (${String(error.cause?.code)})`; // Not listening yet.
+        return undefined;
+      }
+    },
+  );
 
   const socket = new WebSocket(target.webSocketDebuggerUrl);
   await new Promise((resolve, reject) => {

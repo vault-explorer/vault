@@ -7,7 +7,7 @@
 // bad input: results are report-only for now (docs/adr/0014).
 import { pathToFileURL } from "node:url";
 
-import { readResults } from "./lib.mjs";
+import { EXPECTED_METRICS, readResults } from "./lib.mjs";
 
 const REGRESSION_THRESHOLD_PERCENT = 10;
 
@@ -42,7 +42,7 @@ function resultCell(head) {
 }
 
 /** Builds the report for two parsed results. Pure, so it can be tested. */
-export function buildReport(base, head) {
+export function buildReport(base, head, expected = []) {
   const baseByName = new Map(base.metrics.map((metric) => [metric.name, metric]));
   const headByName = new Map(head.metrics.map((metric) => [metric.name, metric]));
   const names = [...new Set([...headByName.keys(), ...baseByName.keys()])];
@@ -74,7 +74,9 @@ export function buildReport(base, head) {
   ];
 
   const scopes = [...new Set(names.map((name) => headByName.get(name)?.scope).filter(Boolean))];
+  const missing = expected.filter((name) => !baseByName.has(name) || !headByName.has(name));
   const notes = [
+    ...(missing.length > 0 ? [`**Not measured on both sides:** ${missing.join(", ")}.`, ""] : []),
     `Values are medians. ⚠ marks a change above +${String(REGRESSION_THRESHOLD_PERCENT)}%. Result compares head with the budget.`,
     ...(scopes.length > 0 ? [`\\* Partial coverage of the budget: ${scopes.join("; ")}.`] : []),
   ];
@@ -108,7 +110,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
     process.exit(2);
   }
   try {
-    console.log(buildReport(readResults(basePath), readResults(headPath)));
+    console.log(buildReport(readResults(basePath), readResults(headPath), EXPECTED_METRICS));
   } catch (error) {
     console.error(`error: ${error.message}`);
     process.exit(2);

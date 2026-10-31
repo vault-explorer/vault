@@ -67,8 +67,10 @@ async function runApp(repo, out, commit, { build, runs, settleSeconds }) {
     });
   }
   const { runAppBench } = await import("./app-bench.mjs");
-  const metrics = await runAppBench({ exe, probeExe, runs, settleSeconds });
-  console.log(`results: ${writeResults(out, "app", commit, metrics)}`);
+  const { metrics, failures } = await runAppBench({ exe, probeExe, runs, settleSeconds });
+  if (metrics.length > 0) console.log(`results: ${writeResults(out, "app", commit, metrics)}`);
+  for (const failure of failures) console.error(`error: ${failure}`);
+  if (failures.length > 0) process.exitCode = 1;
 }
 
 const { values } = parseArgs({

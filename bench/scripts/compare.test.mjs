@@ -77,6 +77,16 @@ test("handles metrics present on only one side", () => {
   assert.equal(cells(rowFor(report, "gone"))[5], "–");
 });
 
+test("names expected metrics that a side didn't measure", () => {
+  const report = buildReport(result([measured("a", 1), measured("b", 1)]), result([measured("a", 1)]), [
+    "a",
+    "b",
+    "c",
+  ]);
+  assert.match(report, /\*\*Not measured on both sides:\*\* b, c\./);
+  assert.doesNotMatch(buildReport(result([]), result([])), /Not measured/);
+});
+
 test("marks partial budgets and explains them", () => {
   const partial = { budget: 50, budget_op: "<", scope: "core only" };
   const report = buildReport(

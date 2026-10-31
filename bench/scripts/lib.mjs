@@ -12,6 +12,9 @@ export const REPO_ROOT = join(SCRIPTS_DIR, "..", "..");
 
 const budgets = JSON.parse(readFileSync(join(SCRIPTS_DIR, "..", "budgets.json"), "utf8")).metrics;
 
+/** Every metric a full run should produce. */
+export const EXPECTED_METRICS = Object.keys(budgets);
+
 export function median(values) {
   const sorted = [...values].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
