@@ -1,0 +1,48 @@
+{
+  "$comment": "One entry per benchmark metric. budget and budget_op mirror the coverage table in docs/PERFORMANCE.md, and a vault-bench test fails if the two disagree. scope is shown next to the result when the metric covers only part of what the budget promises.",
+  "metrics": {
+    "dir_list.10k.first_batch": {
+      "unit": "ms",
+      "budget": 50,
+      "budget_op": "<",
+      "scope": "core listing only; IPC and paint not included"
+    },
+    "dir_list.10k.full": {
+      "unit": "ms",
+      "budget": 300,
+      "budget_op": "<",
+      "scope": "core listing only; IPC and paint not included"
+    },
+    "dir_list.100k.first_batch": { "unit": "ms" },
+    "dir_list.100k.full": { "unit": "ms" },
+    "fuzzy.100k.one_query": {
+      "unit": "ms",
+      "budget": 16,
+      "budget_op": "<",
+      "scope": "placeholder: core matching of one query; IPC and paint not included"
+    },
+    "cold_start": { "unit": "ms", "budget": 400, "budget_op": "<" },
+    "idle_memory.private_working_set": { "unit": "MB", "budget": 150, "budget_op": "<" },
+    "idle_memory.working_set": { "unit": "MB" },
+    "scroll.frame_time.p50": { "unit": "ms" },
+    "scroll.frame_time.p95": {
+      "unit": "ms",
+      "budget": 16.7,
+      "budget_op": "<=",
+      "scope": "bench probe list, not the real list"
+    },
+    "scroll.frame_time.p99": { "unit": "ms" },
+    "scroll.dropped_frames": {
+      "unit": "%",
+      "budget": 1,
+      "budget_op": "<",
+      "scope": "bench probe list, not the real list"
+    },
+    "scroll.dom_rows_max": {
+      "unit": "rows",
+      "budget": 60,
+      "budget_op": "<=",
+      "scope": "bench probe list, not the real list"
+    }
+  }
+}

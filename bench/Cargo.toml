@@ -13,8 +13,16 @@ publish.workspace = true
 path = "src/lib.rs"
 bench = false
 
+[[bin]]
+name = "vault-fixtures"
+path = "src/bin/vault-fixtures.rs"
+bench = false
+
 [dependencies]
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
 vault-core.workspace = true
+vault-index.workspace = true
 
 [dev-dependencies]
 criterion = "0.8"
