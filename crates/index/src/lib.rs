@@ -2,7 +2,7 @@
 //!
 //! Whole-disk filename index and search.
 //!
-//! Responsibilities (not built yet):
+//! Responsibilities (only the core of fuzzy matching is built so far):
 //!
 //! - **Indexer** — builds the initial index (Windows: MFT enumeration through
 //!   `vault-platform`'s `Indexer`; fallback: directory walk) in the background,
@@ -16,10 +16,4 @@
 //! Budgets this crate owns: keystroke → fuzzy results < 16 ms, warm whole-disk
 //! search < 50 ms, initial index of 1M files < 60 s (see `docs/PERFORMANCE.md`).
 
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn placeholder() {
-        assert_eq!(env!("CARGO_PKG_NAME"), "vault-index");
-    }
-}
+pub mod fuzzy;

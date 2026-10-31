@@ -47,6 +47,8 @@ jobs:
 
       - name: cargo test
         run: cargo test --workspace
+      - name: bench script tests
+        run: pnpm test:bench-scripts
       # Release build with installers, so every PR has a downloadable Windows build.
       # Builds are unsigned until code signing is set up (docs/WINDOWS.md).
       - name: Build app and installers
@@ -99,14 +101,91 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo check --all-targets
 
-  # Placeholder: runs the benches once in test mode so they keep compiling.
-  # The Phase 0 harness replaces this with a comparison against main that fails
-  # on a >10% regression (docs/PERFORMANCE.md, docs/backlog/phase-0.md).
+  # Benches the PR's merge base and head in this one job, so both see the same
+  # runner, and posts the comparison to the job summary. Report-only: it can't fail
+  # the build, because shared runners are too noisy to gate on (docs/adr/0014).
   bench:
-    name: Benchmarks (placeholder)
+    name: Benchmarks · base vs head (report-only)
+    if: github.event_name == 'pull_request'
     runs-on: windows-latest
+    continue-on-error: true
+    timeout-minutes: 90
+    env:
+      # A newer stable shouldn't be able to break the build of an older base commit.
+      RUSTFLAGS: ""
+      CARGO_TARGET_DIR: ${{ github.workspace }}/target
+      VAULT_BENCH_FIXTURES: ${{ github.workspace }}/fixtures
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: head
+          fetch-depth: 0
+      - name: Check out base commit
+        id: base
+        shell: pwsh
+        working-directory: head
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          $base = git merge-base $env:BASE_SHA $env:HEAD_SHA
+          # A base from before the harness has nothing to run, so measure head twice.
+          # Differences in that table are pure runner noise.
+          git cat-file -e "${base}:bench/budgets.json" 2>$null
+          if ($LASTEXITCODE -ne 0) {
+            "::notice::Base $base has no bench harness; running head against itself."
+            "same_commit=true" >> $env:GITHUB_OUTPUT
+            $base = $env:HEAD_SHA
+          }
+          $global:LASTEXITCODE = 0
+          git worktree add --detach ../base $base
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - run: cargo bench -p vault-bench -- --test
+        with:
+          workspaces: head -> ../target
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: head/package.json
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: head/pnpm-lock.yaml
+
+      # Each commit generates fixtures with its own generator. That reuses the tree
+      # unless the PR changes the generator, and then each side still gets its own.
+      - name: Bench base
+        continue-on-error: true
+        working-directory: base
+        run: |
+          pnpm install --frozen-lockfile
+          cargo run -p vault-bench --release --bin vault-fixtures -- generate
+          node ../head/bench/scripts/run.mjs --repo . --out ../results/base
+      - name: Bench head
+        continue-on-error: true
+        working-directory: head
+        run: |
+          pnpm install --frozen-lockfile
+          cargo run -p vault-bench --release --bin vault-fixtures -- generate
+          node bench/scripts/run.mjs --repo . --out ../results/head
+
+      - name: Post comparison to job summary
+        continue-on-error: true
+        shell: pwsh
+        env:
+          SAME_COMMIT: ${{ steps.base.outputs.same_commit }}
+        run: |
+          "## Benchmarks (report-only)`n" >> $env:GITHUB_STEP_SUMMARY
+          if ($env:SAME_COMMIT -eq "true") {
+            "Base has no bench harness, so this compares head with itself. Changes are runner noise.`n" >> $env:GITHUB_STEP_SUMMARY
+          }
+          node head/bench/scripts/compare.mjs results/base results/head *>&1 | Tee-Object -Variable report
+          $report >> $env:GITHUB_STEP_SUMMARY
+      - name: Upload results
+        continue-on-error: true
+        uses: actions/upload-artifact@v7
+        with:
+          name: bench-results-${{ github.event.pull_request.head.sha }}
+          path: results/*/*.json
+          retention-days: 14

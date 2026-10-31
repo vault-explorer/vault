@@ -52,7 +52,9 @@ cargo clippy --workspace --all-targets -- -D warnings
 cargo fmt --all -- --check
 pnpm lint && pnpm format:check && pnpm typecheck     # UI checks
 
-cargo bench -p vault-bench                           # benchmarks
+cargo run -p vault-bench --release --bin vault-fixtures -- generate  # once, ~2 GB
+pnpm bench                                           # benchmarks (see bench/README.md)
+pnpm test:bench-scripts                              # tests for the bench scripts
 ```
 
 `--workspace` includes the Tauri app crate, which needs WebView2 on Windows or webkit2gtk on Linux. Without those, plain `cargo test` / `cargo clippy` cover every crate except the app.

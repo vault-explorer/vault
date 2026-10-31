@@ -37,7 +37,7 @@ Decisions made while scaffolding the repo (toolchain, naming, platform dispatch,
 
 ## Project process
 
-- **CI (GitHub Actions):** build + test on Windows per PR (macOS/Linux compile checks from day one, full tests from Phase 2); clippy, rustfmt, eslint, prettier; benchmark comparison vs `main`; nightly builds; tagged releases publish installers + updater feed.
+- **CI (GitHub Actions):** build + test on Windows per PR (macOS/Linux compile checks from day one, full tests from Phase 2); clippy, rustfmt, eslint, prettier; benchmark comparison vs `main` (report-only for now, [ADR 0014](adr/0014-report-only-bench-ci.md)); nightly builds; tagged releases publish installers + updater feed.
 - **Community:** README, CONTRIBUTING, CODE_OF_CONDUCT, SECURITY, issue/PR templates, `good first issue` labels, GitHub Projects roadmap, Discussions.
 - **RFCs** (Markdown PR in [`rfcs/`](rfcs/)) for config-format or plugin-API changes.
 - **ADRs** in [`adr/`](adr/) for architecture decisions.

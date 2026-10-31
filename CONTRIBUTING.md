@@ -29,7 +29,7 @@ pnpm typecheck
 
 On Linux or macOS without the Tauri system libraries, drop `--workspace` to skip the app crate.
 
-Benchmarks: `cargo bench -p vault-bench`. If your change touches a hot path, include before/after numbers and your hardware in the PR.
+Benchmarks: see [bench/README.md](bench/README.md). If your change touches a hot path, include before/after numbers and your hardware in the PR.
 
 ## Pull requests
 
