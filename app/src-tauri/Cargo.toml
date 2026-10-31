@@ -17,6 +17,11 @@ path = "src/lib.rs"
 name = "vault"
 path = "src/main.rs"
 
+[features]
+# Bench builds only: keeps WebView2's remote debugging available so the scroll
+# bench can attach over the Chrome DevTools Protocol. See docs/adr/0015.
+bench-harness = []
+
 [build-dependencies]
 tauri-build = "2"
 
