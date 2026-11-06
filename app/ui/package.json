@@ -15,17 +15,17 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^2.12.4",
-    "solid-js": "^1.9.17"
+    "solid-js": "^1.9.18"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "eslint": "^10.13.0",
+    "eslint": "^10.14.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-solid": "^0.18.1",
     "prettier": "^3.9.10",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.1",
     "vite": "^8.3.5",
-    "vite-plugin-solid": "^2.11.14"
+    "vite-plugin-solid": "^2.11.15"
   }
 }
