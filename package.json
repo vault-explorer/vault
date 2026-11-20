@@ -16,6 +16,6 @@
     "typecheck": "pnpm --filter vault-ui typecheck"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2.12.4"
+    "@tauri-apps/cli": "^2.12.5"
   }
 }
